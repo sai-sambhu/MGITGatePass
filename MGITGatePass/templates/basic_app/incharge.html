@@ -1,0 +1,58 @@
+{% extends "basic_app/base.html" %}
+{% block body_block %}
+<center>
+{% if user.is_authenticated %}
+
+<div class="jumbotron">
+<h3><u>Your Information</u></h3>
+<h5>Hello {{ user.username }},Your College Staff id is {{ user.studentprofileinfo.roll }}, You are incharge for {{ user.studentprofileinfo.branch }} Gatepasses, Apporve accordingly</h5>
+</div>
+
+<div class="jumbotron">
+<h3>Students of {{ user.studentprofileinfo.branch }} who raised Gatepass requests</h3>
+{% for info in gatePassInfos %}
+
+{% if  user.studentprofileinfo.branch == info.branch and info.status == "Requested" %}
+
+
+<div class="studentList" align="left">
+
+<strong>Roll: </strong>{{ info.roll }} &emsp;<strong>Reason: </strong>{{ info.reason }} 
+<form action="Approve" method="POST">
+  {% csrf_token %}
+   <input type="hidden" name="roll" value="{{ info.roll }}">
+  <input class="buttonGreen" id="sub" type="submit" value="Approve">
+</form>
+<form action="Disapprove" method="POST">
+  {% csrf_token %}
+  <input type="hidden" name="roll" value="{{ info.roll }}">
+  <input class="buttonRed" id="sub" type="submit" value="Dispprove">
+</form>
+<hr class="new5">
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+</div>
+
+
+<div class="jumbotron">
+<h2>Click the button to Refresh the Gatepass entries </h2>
+<form action="refreshAllStudents" method="POST">
+  {% csrf_token %}
+  <input id="sub" type="submit" value="Refresh All Gatepasses">
+</form>
+</div>
+
+<div class="jumbotron">
+<h2 style="color:#FB0404;"><strong>Danger Zone </strong>Click the button to disapprove all the Gatepasses </h2>
+
+<form action="disapproveAllStudents" method="POST">
+  {% csrf_token %}
+  <input id="sub" type="submit" value="Disapprove All Gatepasses">
+</form>
+</div>
+
+
+</center>
+{% endblock %}

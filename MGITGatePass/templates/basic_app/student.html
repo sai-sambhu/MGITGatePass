@@ -1,0 +1,114 @@
+{% extends "basic_app/base.html" %}
+{% block body_block %}
+
+
+{% if user.is_authenticated %}
+   
+  <h1 align="center">
+  
+ Hello, {{ user.username }} 
+ 
+ 
+ {% if user.studentprofileinfo.typeof == 'Incharge' %}
+ you are logged in as a {{ user.studentprofileinfo.branch }} Gatepass Incharge perform Gatepass permissions 
+ 
+ {% else %}
+ you are logged in as a {{ user.studentprofileinfo.branch }} student ask for Gatepass approval 
+ 
+ <br>
+ </h1>
+ 
+ <center>
+ {% for info in inchargeinfos %}
+ {% if  user.studentprofileinfo.branch == info.branch and info.typeof == 'Incharge'   %}
+ <br><br>
+ 
+ <img src="{{ info.profile_pic.url }}" class="responsiveimg" width="600" height="400" border="100"></img>
+ 
+ <h2>Gatepass incharge for {{ user.studentprofileinfo.branch }} is {{ info }}<br></h2>
+ <h4>College Staff Id is {{ info.roll }}</h4>
+ <br>
+ 
+ {% endif %}
+ {% endfor %}
+ 
+ <div class="jumbotron">
+ <h3>Student Information<br></h3>
+ Name:{{ user.username  }}<br>
+ Roll:{{ user.studentprofileinfo.roll  }}<br>
+ Branch:{{ user.studentprofileinfo.branch  }}<br>
+ </div>
+ 
+  <div class="jumbotron">
+  {% if  Status == "NotRequested"   %}
+  <h3>Fill out the form Reason is compulsory</h3>
+  <form action="requestGP" method="POST">
+  {% csrf_token %}
+  <input type="text" name="reason" placeholder="Reason">
+  
+  <br><br>
+  <input class="buttonGreen" id="sub" type="submit" value="Submit">
+</form>
+
+{% else  %}
+
+
+{% if  Status == "Requested"   %}
+<h2>Gatepass Requested please wait for the apporval, any quires please talk to the incharge.</h2>
+
+{% else  %}
+
+{% if  Status == "Approved"   %}
+<h2>Gatepass Approved<br></h2> 
+</h3>This button is security button, please dont click it, it should be clicked by security guard, if accidentally clicked please contact the Administrator, Security will NOT allow you out.</h3>
+<br><br>
+<form action="securityClick" method="POST">
+  {% csrf_token %}
+  <input class="buttonYellow" id="sub" type="submit" value="Security Button">
+</form>
+{% else  %}
+
+{% if  Status == "Denied"   %}
+<h2 style="color:#FB0404;">Your Gatepass request is cancelled!! please contact your Incharge.<br></h2>
+{% else  %}
+<h2 style="color:#039906;">You may leave, Thank You!!<br></h2> 
+
+<h2 style="color:#ff3300;" id="demo"></h2>
+<br> 
+<button class="buttonYellow" onclick="typeWriter()">Security Reference Button</button>
+<script>
+var i = 0;
+var txt = 'Security Reference';
+var speed = 100;
+
+function typeWriter() {
+  if (i < txt.length) {
+    document.getElementById("demo").innerHTML += txt.charAt(i);
+    i++;
+    setTimeout(typeWriter, speed);
+  }
+}
+</script>
+
+
+{% endif %}
+{% endif %}
+
+{% endif %}
+
+
+ 
+{% endif %}
+
+
+  </div>
+
+ {% endif %}
+  
+
+ {% endif %}
+</center>
+ <br>
+ 
+
+{% endblock %}
